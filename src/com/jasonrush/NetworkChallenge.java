@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jasonrush.models.NetworkChallengeFlickrResultSaver;
 import com.jasonrush.models.NetworkChallengeTwitterResultSaver;
+import com.jasonrush.spiders.FlickrSpider;
 import com.jasonrush.spiders.Spider;
 import com.jasonrush.spiders.TwitterSpider;
 
@@ -14,10 +16,14 @@ import com.jasonrush.spiders.TwitterSpider;
  */
 public class NetworkChallenge {
 	private static final String[] twitterQueryStrings = {
-		"(network challenge) OR (DARPA (van OR truck OR balloon OR sphere OR ball OR orb OR globe))",
-		"(red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet OR weather OR sounding) (balloon OR sphere OR ball OR orb OR globe)",
-		"(tether OR tethered OR moor OR moored OR large OR giant OR big) (balloon OR sphere OR ball OR orb OR globe)"
-		
+		"(network challenge) OR (DARPA (van OR truck OR balloon))",
+		"(red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet OR weather OR sounding) balloon",
+		"(tether OR tethered OR moor OR moored OR large OR giant OR big) balloon"
+	};
+	private static final String[] flickrQueryStrings = {
+		"(network AND challenge) OR (DARPA AND (van OR truck OR balloon))",
+		"(red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet OR weather OR sounding) AND balloon",
+		"(tether OR tethered OR moor OR moored OR large OR giant OR big) AND balloon"
 	};
 	private static List<Spider> spiders = new ArrayList<Spider>();
 	
@@ -28,9 +34,11 @@ public class NetworkChallenge {
 		//Initialize
 		if (!initDriver()) return;
 		if (!initSpiders()) return;
-		for (Spider spider : spiders) {
-			spider.processNextBatch();
-		}	
+		// while (true) {		//TODO: This should loop indefinitely in production
+			for (Spider spider : spiders) {
+				spider.processNextBatch();
+			}
+		//}
 	}
 	
 	private static boolean initDriver() {
@@ -47,12 +55,23 @@ public class NetworkChallenge {
 	private static boolean initSpiders() {
 		//Initialize each spider
 		if (!initTwitterSpider()) return false;
+		if (!initFlickrSpider()) return false;
 		return true;
 	}
 	
 	private static boolean initTwitterSpider() {
 		try {
 			spiders.add(new TwitterSpider(twitterQueryStrings, new NetworkChallengeTwitterResultSaver()));
+			return true;
+		} catch (SQLException e) {
+			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+			return false;
+		}
+	}
+	
+	private static boolean initFlickrSpider() {
+		try {
+			spiders.add(new FlickrSpider(flickrQueryStrings, new NetworkChallengeFlickrResultSaver()));
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");

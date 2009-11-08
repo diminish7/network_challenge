@@ -1,6 +1,7 @@
 package com.jasonrush.models;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,6 +34,10 @@ public class NetworkChallengeTwitterResultSaver implements TwitterResultSaver {
 			statement.setString(3, searchPhrase);
 			//Surrounding Text
 			statement.setString(4, tweet.getText());
+			//Time Stamp
+			statement.setDate(5, new Date(tweet.getCreatedAt().getTime()));
+			//Location information
+			statement.setString(6, null);	//TODO: Can we get location info from the user or tweet?
 			statement.executeUpdate();
 			System.out.println("Saved tweet " + tweet.getId());
 		} catch (SQLException e) {
