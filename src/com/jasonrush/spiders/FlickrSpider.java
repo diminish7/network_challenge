@@ -14,7 +14,7 @@ import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotosInterface;
 import com.aetrion.flickr.photos.SearchParameters;
 import com.aetrion.flickr.util.IOUtilities;
-import com.jasonrush.models.NetworkChallengeFlickrResultSaver;
+import com.jasonrush.models.FlickrResultSaver;
 
 public class FlickrSpider implements Spider {
 	private static String apiKey;
@@ -25,9 +25,9 @@ public class FlickrSpider implements Spider {
     private PhotosInterface photosInterface;
     
     private ParamsTracker[] queries;
-    private NetworkChallengeFlickrResultSaver resultSaver;
+    private FlickrResultSaver resultSaver;
     
-	public FlickrSpider(String[] queries, NetworkChallengeFlickrResultSaver resultSaver) {
+	public FlickrSpider(String[] queries, FlickrResultSaver resultSaver) {
 		InputStream in = null;
 		Properties properties = null;
 		hasConnection = true;

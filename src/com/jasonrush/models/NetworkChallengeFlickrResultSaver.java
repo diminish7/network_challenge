@@ -48,6 +48,8 @@ public class NetworkChallengeFlickrResultSaver implements FlickrResultSaver {
 			String geoString = null;
 			if (geoData != null) geoString = "Latitude: " + geoData.getLatitude() + ", Longitude: " + geoData.getLongitude();
 			statement.setString(6, geoString);
+			//Unique ID
+			statement.setString(7, photo.getId());
 			statement.executeUpdate();
 			System.out.println("Saved photo " + photo.getId());
 		} catch (SQLException e) {

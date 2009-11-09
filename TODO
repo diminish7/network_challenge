@@ -1,2 +1,3 @@
 Turn the spider calls into an infinite loop until manually broken
 Each spider needs it's own thread
+Check each database entry's unique field for dups before INSERT

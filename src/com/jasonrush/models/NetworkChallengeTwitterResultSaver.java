@@ -38,6 +38,8 @@ public class NetworkChallengeTwitterResultSaver implements TwitterResultSaver {
 			statement.setDate(5, new Date(tweet.getCreatedAt().getTime()));
 			//Location information
 			statement.setString(6, null);	//TODO: Can we get location info from the user or tweet?
+			//Unique ID
+			statement.setString(7, "" + tweet.getId());
 			statement.executeUpdate();
 			System.out.println("Saved tweet " + tweet.getId());
 		} catch (SQLException e) {
