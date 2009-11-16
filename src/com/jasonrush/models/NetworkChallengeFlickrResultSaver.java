@@ -1,10 +1,10 @@
 package com.jasonrush.models;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import com.aetrion.flickr.photos.GeoData;
 import com.aetrion.flickr.photos.Photo;
@@ -42,7 +42,7 @@ public class NetworkChallengeFlickrResultSaver implements FlickrResultSaver {
 			text += "-- Description: " + photo.getDescription();
 			statement.setString(4, text);
 			//Time Stamp
-			statement.setDate(5, new Date(photo.getDateTaken().getTime()));
+			statement.setTimestamp(5, new Timestamp(photo.getDateTaken().getTime()));
 			//Location information
 			GeoData geoData = photo.getGeoData();
 			String geoString = null;

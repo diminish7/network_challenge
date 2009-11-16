@@ -1,10 +1,10 @@
 package com.jasonrush.models;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import uk.org.catnip.eddie.Entry;
 
@@ -37,9 +37,9 @@ public class NetworkChallengeFeedResultSaver implements FeedResultSaver {
 			java.util.Date date = entry.getCreated();
 			if (date == null) date = entry.getModified();
 			if (date == null) {
-				statement.setDate(5, null);
+				statement.setTimestamp(5, null);
 			} else {
-				statement.setDate(5, new Date(date.getTime()));
+				statement.setTimestamp(5, new Timestamp(date.getTime()));
 			}
 			//Location information
 			statement.setString(6, null);
