@@ -23,10 +23,10 @@ public class NetworkChallengeFeedResultSaver implements FeedResultSaver {
 	}
 
 	@Override
-	public void saveResult(Entry entry, String searchPhrase) {
+	public void saveResult(String source, Entry entry, String searchPhrase) {
 		try {
 			//Source
-			statement.setString(1, "Article: " + entry.get("title"));
+			statement.setString(1, source);
 			//URL
 			statement.setString(2, entry.get("link"));
 			//Search Phrase

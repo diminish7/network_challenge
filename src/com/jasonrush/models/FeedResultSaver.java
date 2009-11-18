@@ -9,5 +9,5 @@ public interface FeedResultSaver {
 	 * @param entry The the article object from the feed
 	 * @param searchPhrase The search query
 	 */
-	public void saveResult(Entry entry, String searchPhrase);
+	public void saveResult(String source, Entry entry, String searchPhrase);
 }

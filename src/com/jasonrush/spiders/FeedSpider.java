@@ -1,6 +1,7 @@
 package com.jasonrush.spiders;
 
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
@@ -15,18 +16,33 @@ import uk.org.catnip.eddie.parser.Parser;
 import com.jasonrush.models.FeedResultSaver;
 
 public class FeedSpider implements Spider {
+	private String source;
 	private URL feedUrl;
 	private String[] queries;
+	private String queryFromUrl;
 	private FeedResultSaver resultSaver;
 	private Parser parser;
 	private Date earliest;
 	
-	public FeedSpider(String feedUrl, String[] queries, FeedResultSaver resultSaver) {
+	public FeedSpider(String source, String feedUrl, String[] queries, FeedResultSaver resultSaver) {
 		try {
+			this.source = source;
 			this.feedUrl = new URL(feedUrl);
 			this.queries = queries;
 			this.resultSaver = resultSaver;
 			this.parser = new Parser();
+			if (queries == null) {
+				String query = this.feedUrl.getQuery();
+				int startIndex = query.indexOf("q=");
+				int endIndex = query.indexOf("&", startIndex);
+				if (startIndex == -1 || endIndex == -1) {
+					queryFromUrl = null;
+				} else {
+					queryFromUrl = query.substring(startIndex+2, endIndex);
+				}
+			} else {
+				queryFromUrl = null;
+			}
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
 			calendar.set(Calendar.MINUTE, 0);
@@ -42,7 +58,9 @@ public class FeedSpider implements Spider {
 	@Override
 	public void processNextBatch() {
 		try {
-			FeedData feedData = parser.parse(new InputStreamReader(feedUrl.openConnection().getInputStream()));
+			HttpURLConnection conn = (HttpURLConnection)feedUrl.openConnection();
+			conn.setRequestProperty("User-Agent", "NewsFeedSpider");
+			FeedData feedData = parser.parse(new InputStreamReader(conn.getInputStream()));
 			Iterator entries = feedData.entries();
 			Date latestInBatch = null;
 			while (entries.hasNext()) {
@@ -76,11 +94,17 @@ public class FeedSpider implements Spider {
 			sb.append(category.getLabel());
 		}
 		String fullText = sb.toString().toLowerCase();
-		for (String query : queries) {
-			if (searchText(fullText, query)) {
-				//Found a match
-				resultSaver.saveResult(entry, query);
-				break;
+		if (queries == null || queries.length == 0) {
+			//This must be a feed from an existing search (like Google News), so no additional query necessary
+			resultSaver.saveResult(source, entry, queryFromUrl);
+		} else {
+			//Need to run this against a query or queries
+			for (String query : queries) {
+				if (searchText(fullText, query)) {
+					//Found a match
+					resultSaver.saveResult(source, entry, query);
+					break;
+				}
 			}
 		}
 	}
