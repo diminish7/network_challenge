@@ -1,8 +1,4 @@
-Make a Query object that can spit out strings for the different search APIs
- or can be used directly with the feed search
- 
-Need ability to search on a feed with no extra search info (for saved search feeds like Google news)
-
+Check each database entry's unique field for dups before INSERT
+Store last id for each search so if it fails catastrophically, it can pick up where it left off
 Turn the spider calls into an infinite loop until manually broken
 Each spider needs it's own thread
-Check each database entry's unique field for dups before INSERT

@@ -10,6 +10,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import com.jasonrush.models.TwitterResultSaver;
+import com.jasonrush.models.queries.Queryable;
 
 /**
  * @author jasonrush - 10/31/2009
@@ -24,7 +25,7 @@ public class TwitterSpider implements Spider {
 	private TwitterResultSaver resultSaver;
 	
 	
-	public TwitterSpider(String[] queries, TwitterResultSaver resultSaver) {
+	public TwitterSpider(Queryable[] queries, TwitterResultSaver resultSaver) {
 		this.resultSaver = resultSaver;
 		this.twitter = new Twitter();
 		this.queries = new QueryTracker[queries.length];
@@ -60,8 +61,8 @@ public class TwitterSpider implements Spider {
 		private Query query;
 		private Long sinceId;
 		
-		public QueryTracker(String query) {
-			this.query = new Query(query);
+		public QueryTracker(Queryable query) {
+			this.query = new Query(query.toString(Queryable.IMPLICIT_AND));
 			this.query.setRpp(100);
 			this.query.setPage(1);
 			this.sinceId = null;

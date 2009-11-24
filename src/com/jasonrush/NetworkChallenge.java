@@ -7,8 +7,11 @@ import java.util.List;
 import com.jasonrush.models.NetworkChallengeFeedResultSaver;
 import com.jasonrush.models.NetworkChallengeFlickrResultSaver;
 import com.jasonrush.models.NetworkChallengeTwitterResultSaver;
-import com.jasonrush.spiders.FeedSpider;
+import com.jasonrush.models.queries.Query;
+import com.jasonrush.models.queries.QueryGroup;
+import com.jasonrush.models.queries.Queryable;
 import com.jasonrush.spiders.FlickrSpider;
+import com.jasonrush.spiders.GoogleNewsSpider;
 import com.jasonrush.spiders.Spider;
 import com.jasonrush.spiders.TwitterSpider;
 
@@ -17,23 +20,24 @@ import com.jasonrush.spiders.TwitterSpider;
  *
  */
 public class NetworkChallenge {
-	//TODO: Work these into a query object that can be shared among all of them
-	private static final String[] twitterQueryStrings = {
-		"(network challenge) OR (DARPA (van OR truck OR balloon))",
-		"(red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet OR weather OR sounding) balloon",
-		"(tether OR tethered OR moor OR moored OR large OR giant OR big) balloon"
-	};
-	private static final String[] flickrQueryStrings = {
-		"(network AND challenge) OR (DARPA AND (van OR truck OR balloon))",
-		"(red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet OR weather OR sounding) AND balloon",
-		"(tether OR tethered OR moor OR moored OR large OR giant OR big) AND balloon"
-	};
-	private static final String[] googleNewsFeeds = {
-		"http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&q=%28network+challenge%29+OR+%28DARPA+van+OR+truck+OR+balloon%29&as_qdr=d&as_drrb=q&cf=all&scoring=n&output=rss",
-		"http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&as_scoring=n&as_maxm=11&q=balloon+red+OR+orange+OR+purple+OR+burgundy+OR+magenta+OR+maroon+OR+scarlet+OR+weather+OR+sounding&as_qdr=d&as_drrb=q&as_mind=19&as_minm=10&cf=all&as_maxd=18&output=rss",
-		"http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&as_scoring=n&as_maxm=11&q=balloon+tether+OR+tethered+OR+moor+OR+moored+OR+large+OR+giant+OR+big&as_qdr=d&as_drrb=q&as_mind=19&as_minm=10&cf=all&as_maxd=18&output=rss"
-	};
 	private static List<Spider> spiders = new ArrayList<Spider>();
+	
+	private static final Queryable[] queries;
+	//Build out the queries
+	static {
+		queries = new Queryable[3];
+		// (network AND challenge) OR (DARPA AND (van OR truck OR balloon))
+		QueryGroup networkAndChallenge = new QueryGroup(new String[] { "network", "challenge" }, Queryable.AND);
+		QueryGroup vanTruckOrBalloon = new QueryGroup(new String[] { "van", "truck", "balloon" }, Queryable.OR);
+		QueryGroup darpaAndVanTruckOrBalloon = new QueryGroup(new Queryable[] { new Query("DARPA"), vanTruckOrBalloon }, Queryable.AND);
+		queries[0] = new QueryGroup(new Queryable[] { networkAndChallenge, darpaAndVanTruckOrBalloon }, Queryable.OR);
+		// (red OR orange OR purple OR burgundy OR magenta OR maroon OR scarlet) AND balloon
+		QueryGroup balloonColors = new QueryGroup(new String[] { "red", "orange", "purple", "burgundy", "magenta", "maroon", "scarlet" }, Queryable.AND);
+		queries[1] = new QueryGroup(new Queryable[] { balloonColors, new Query("balloon") }, Queryable.AND);
+		// (weather OR sounding OR tether OR moor OR large OR giant OR big) AND balloon
+		QueryGroup balloonDescriptors = new QueryGroup(new String[] { "weather", "sounding", "tether", "moor", "large", "giant", "big" }, Queryable.OR);
+		queries[2] = new QueryGroup(new Queryable[] { balloonDescriptors, new Query("balloon") }, Queryable.AND);
+	}
 	
 	/**
 	 * @param args
@@ -73,7 +77,7 @@ public class NetworkChallenge {
 	
 	private static boolean initTwitterSpider() {
 		try {
-			spiders.add(new TwitterSpider(twitterQueryStrings, new NetworkChallengeTwitterResultSaver()));
+			spiders.add(new TwitterSpider(queries, new NetworkChallengeTwitterResultSaver()));
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
@@ -83,7 +87,7 @@ public class NetworkChallenge {
 	
 	private static boolean initFlickrSpider() {
 		try {
-			spiders.add(new FlickrSpider(flickrQueryStrings, new NetworkChallengeFlickrResultSaver()));
+			spiders.add(new FlickrSpider(queries, new NetworkChallengeFlickrResultSaver()));
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
@@ -92,9 +96,9 @@ public class NetworkChallenge {
 	}
 	
 	private static boolean initFeedSpiders() {
-		for (String url : googleNewsFeeds) {
+		for (Queryable query : queries) {
 			try {
-				spiders.add(new FeedSpider("Google News", url, null, new NetworkChallengeFeedResultSaver()));
+				spiders.add(new GoogleNewsSpider("Google News", query, new NetworkChallengeFeedResultSaver()));
 				return true;
 			} catch (SQLException e) {
 				System.out.println("Uh oh. Can't create a connection to the MySQL database...");

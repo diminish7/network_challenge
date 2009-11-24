@@ -19,7 +19,7 @@ public class FeedSpider implements Spider {
 	private String source;
 	private URL feedUrl;
 	private String[] queries;
-	private String queryFromUrl;
+	protected String queryFromUrl;
 	private FeedResultSaver resultSaver;
 	private Parser parser;
 	private Date earliest;

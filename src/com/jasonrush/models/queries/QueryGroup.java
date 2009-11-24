@@ -1,5 +1,8 @@
 package com.jasonrush.models.queries;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class QueryGroup extends Queryable {
 	
 	private Queryable[] queries;
@@ -7,6 +10,15 @@ public class QueryGroup extends Queryable {
 	
 	public QueryGroup(Queryable[] queries, String operator) {
 		this.queries = queries;
+		this.operator = operator;
+	}
+	
+	public QueryGroup(String[] queries, String operator) {
+		Queryable[] queriables = new Queryable[queries.length];
+		for (int i=0; i< queries.length; i++) {
+			queriables[i] = new Query(queries[i]);
+		}
+		this.queries = queriables;
 		this.operator = operator;
 	}
 	
@@ -56,7 +68,14 @@ public class QueryGroup extends Queryable {
 	}
 	
 	private String toGoogleURLString() {
-		//TODO: I think this is the base url followed by a URL-escaped version of toString(IMPLICIT_AND)
-		return null;
+		StringBuffer sb = new StringBuffer();
+		try {
+			sb.append("http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&as_scoring=n&as_maxm=11");
+			sb.append("&q=" + URLEncoder.encode(toString(IMPLICIT_AND), "UTF-8"));
+			sb.append("&as_qdr=d&as_drrb=q&as_mind=19&as_minm=10&cf=all&as_maxd=18&output=rss");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
 	}
 }

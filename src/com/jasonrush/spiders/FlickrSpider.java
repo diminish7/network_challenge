@@ -15,6 +15,7 @@ import com.aetrion.flickr.photos.PhotosInterface;
 import com.aetrion.flickr.photos.SearchParameters;
 import com.aetrion.flickr.util.IOUtilities;
 import com.jasonrush.models.FlickrResultSaver;
+import com.jasonrush.models.queries.Queryable;
 
 public class FlickrSpider implements Spider {
 	private static String apiKey;
@@ -27,7 +28,7 @@ public class FlickrSpider implements Spider {
     private ParamsTracker[] queries;
     private FlickrResultSaver resultSaver;
     
-	public FlickrSpider(String[] queries, FlickrResultSaver resultSaver) {
+	public FlickrSpider(Queryable[] queries, FlickrResultSaver resultSaver) {
 		InputStream in = null;
 		Properties properties = null;
 		hasConnection = true;
@@ -70,7 +71,7 @@ public class FlickrSpider implements Spider {
 		private PhotosInterface photosInterface;
 		private Date lastDate;
 		
-		public ParamsTracker(String query, PhotosInterface photosInterface) {
+		public ParamsTracker(Queryable query, PhotosInterface photosInterface) {
 			this.photosInterface = photosInterface;
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -79,7 +80,7 @@ public class FlickrSpider implements Spider {
 			calendar.set(Calendar.MILLISECOND, 0);
 			this.lastDate = calendar.getTime();	//Initialize to start of day
 			this.params = new SearchParameters();
-			this.params.setText(query);
+			this.params.setText(query.toString(Queryable.EXPLICIT_AND));
 			this.params.setMinUploadDate(this.lastDate);
 		}
 		
