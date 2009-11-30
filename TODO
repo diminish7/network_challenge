@@ -1,2 +1,3 @@
+Include Twitter list in twitter search results (or start a new spider for that)
 Turn the spider calls into an infinite loop until manually broken
 Each spider needs it's own thread
