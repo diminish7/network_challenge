@@ -43,12 +43,15 @@ public class FeedSpider implements Spider {
 			} else {
 				queryFromUrl = null;
 			}
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			this.earliest = calendar.getTime();	//Initialize to start of day
+			this.earliest = resultSaver.getLastPostDate(this.source, this.queryFromUrl);
+			if (this.earliest == null) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				this.earliest = calendar.getTime();	//Initialize to start of day
+			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

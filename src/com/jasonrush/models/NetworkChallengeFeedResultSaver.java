@@ -3,8 +3,11 @@ package com.jasonrush.models;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import uk.org.catnip.eddie.Entry;
 
@@ -54,5 +57,18 @@ public class NetworkChallengeFeedResultSaver implements FeedResultSaver {
 			if (guid == null) guid = entry.get("link");
 			System.out.println("Uh oh. Unable to save the feed entry: " + guid);
 		}
+	}
+
+	@Override
+	public Date getLastPostDate(String source, String searchPhrase) {
+		try {
+			Statement query = conn.createStatement();
+			ResultSet result = query.executeQuery("SELECT timestamp FROM search_results WHERE source = '" + source + "' AND search_phrase = '" + searchPhrase + "' ORDER BY timestamp DESC LIMIT 1");
+			if (result.first())
+				return (Date)result.getTimestamp("timestamp");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
