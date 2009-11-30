@@ -1,5 +1,7 @@
 package com.jasonrush.models;
 
+import java.util.Date;
+
 import com.aetrion.flickr.photos.Photo;
 
 public interface FlickrResultSaver {
@@ -9,4 +11,8 @@ public interface FlickrResultSaver {
 	 * @param searchPhrase The search query
 	 */
 	public void saveResult(Photo photo, String searchPhrase);
+	/**
+	 * Gets the last saved date from the database
+	 */
+	public Date getLastPhotoDate(String searchPhrase);
 }

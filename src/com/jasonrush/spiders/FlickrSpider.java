@@ -32,6 +32,7 @@ public class FlickrSpider implements Spider {
 		InputStream in = null;
 		Properties properties = null;
 		hasConnection = true;
+		this.resultSaver = resultSaver;
         try {
             in = getClass().getResourceAsStream("/flickr.properties");
             properties = new Properties();
@@ -45,7 +46,6 @@ public class FlickrSpider implements Spider {
 	        for (int i=0; i<queries.length; i++) {
 	        	this.queries[i] = new ParamsTracker(queries[i], photosInterface);
 	        }
-	        this.resultSaver = resultSaver;
 		} catch (Exception e) {
 			e.printStackTrace();
 			hasConnection = false;
@@ -73,12 +73,15 @@ public class FlickrSpider implements Spider {
 		
 		public ParamsTracker(Queryable query, PhotosInterface photosInterface) {
 			this.photosInterface = photosInterface;
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			this.lastDate = calendar.getTime();	//Initialize to start of day
+			lastDate = resultSaver.getLastPhotoDate(query.toString(Queryable.EXPLICIT_AND));
+			if (lastDate == null) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				this.lastDate = calendar.getTime();	//Initialize to start of day
+			}
 			this.params = new SearchParameters();
 			this.params.setText(query.toString(Queryable.EXPLICIT_AND));
 			this.params.setMinUploadDate(this.lastDate);

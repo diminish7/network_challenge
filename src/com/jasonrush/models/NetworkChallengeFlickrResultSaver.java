@@ -3,8 +3,11 @@ package com.jasonrush.models;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.aetrion.flickr.photos.GeoData;
 import com.aetrion.flickr.photos.Photo;
@@ -42,7 +45,7 @@ public class NetworkChallengeFlickrResultSaver implements FlickrResultSaver {
 			text += "-- Description: " + photo.getDescription();
 			statement.setString(4, text);
 			//Time Stamp
-			statement.setTimestamp(5, new Timestamp(photo.getDateTaken().getTime()));
+			statement.setTimestamp(5, new Timestamp(photo.getDatePosted().getTime()));
 			//Location information
 			GeoData geoData = photo.getGeoData();
 			String geoString = null;
@@ -55,5 +58,18 @@ public class NetworkChallengeFlickrResultSaver implements FlickrResultSaver {
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Unable to save the photo: " + photo.getId());
 		}
+	}
+
+	@Override
+	public Date getLastPhotoDate(String searchPhrase) {
+		try {
+			Statement query = conn.createStatement();
+			ResultSet result = query.executeQuery("SELECT timestamp FROM search_results WHERE source = 'Flickr' AND search_phrase = '" + searchPhrase + "' ORDER BY timestamp DESC LIMIT 1");
+			if (result.first())
+				return (Date)result.getTimestamp("timestamp");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

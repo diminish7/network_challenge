@@ -9,7 +9,7 @@ public interface TwitterResultSaver {
 	 */
 	public void saveResult(Tweet tweet, String searchPhrase);
 	/**
-	 * Gets the most last saved id from the database
+	 * Gets the last saved id from the database
 	 */
 	public Long getLastTweetId(String searchPhrase);
 }
