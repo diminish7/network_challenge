@@ -8,4 +8,8 @@ public interface TwitterResultSaver {
 	 * @param result A query result from a Twitter search
 	 */
 	public void saveResult(Tweet tweet, String searchPhrase);
+	/**
+	 * Gets the most last saved id from the database
+	 */
+	public Long getLastTweetId(String searchPhrase);
 }

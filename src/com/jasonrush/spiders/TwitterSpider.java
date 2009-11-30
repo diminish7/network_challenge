@@ -59,13 +59,13 @@ public class TwitterSpider implements Spider {
 	
 	public class QueryTracker {
 		private Query query;
-		private Long sinceId;
 		
 		public QueryTracker(Queryable query) {
 			this.query = new Query(query.toString(Queryable.IMPLICIT_AND));
 			this.query.setRpp(100);
 			this.query.setPage(1);
-			this.sinceId = null;
+			Long sinceId = initializeSinceId();
+			if (sinceId != null) this.query.setSinceId(sinceId);
 		}
 		
 		public QueryResult doQuery() {
@@ -86,11 +86,9 @@ public class TwitterSpider implements Spider {
 		public void setQuery(Query query) {
 			this.query = query;
 		}
-		public Long getSinceId() {
-			return this.sinceId;
-		}
-		public void setSinceId(Long sinceId) {
-			this.sinceId = sinceId;
+		
+		private Long initializeSinceId() {
+			return resultSaver.getLastTweetId(query.getQuery());
 		}
 	}
 	

@@ -70,8 +70,8 @@ public class NetworkChallenge {
 	private static boolean initSpiders() {
 		//Initialize each spider
 		if (!initTwitterSpider()) return false;
-		if (!initFlickrSpider()) return false;
-		if (!initFeedSpiders()) return false;
+//		if (!initFlickrSpider()) return false;
+//		if (!initFeedSpiders()) return false;
 		return true;
 	}
 	

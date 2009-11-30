@@ -1,10 +1,12 @@
 package com.jasonrush.models;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 import twitter4j.Tweet;
 
@@ -45,5 +47,18 @@ public class NetworkChallengeTwitterResultSaver implements TwitterResultSaver {
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Unable to save the tweet: " + tweet.getId() + ": " + tweet.getText());
 		}
+	}
+
+	@Override
+	public Long getLastTweetId(String searchPhrase) {
+		try {
+			Statement query = conn.createStatement();
+			ResultSet result = query.executeQuery("SELECT unique_id FROM search_results WHERE source = 'Twitter' AND search_phrase = '" + searchPhrase + "' ORDER BY unique_id DESC LIMIT 1");
+			if (result.first())
+				return result.getLong("unique_id");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
