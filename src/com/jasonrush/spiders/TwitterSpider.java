@@ -18,16 +18,20 @@ import com.jasonrush.models.queries.Queryable;
  */
 public class TwitterSpider implements Spider {
 	//Array of query objects
-	private QueryTracker[] queries;
+	protected QueryTracker[] queries;
 	//Instance of Twitter API
-	private Twitter twitter;
+	protected Twitter twitter;
 	//DAO to persist results if needed
-	private TwitterResultSaver resultSaver;
+	protected TwitterResultSaver resultSaver;
 	
 	
-	public TwitterSpider(Queryable[] queries, TwitterResultSaver resultSaver) {
+	public TwitterSpider(TwitterResultSaver resultSaver) {
 		this.resultSaver = resultSaver;
 		this.twitter = new Twitter();
+	}
+	
+	public TwitterSpider(Queryable[] queries, TwitterResultSaver resultSaver) {
+		this(resultSaver);
 		this.queries = new QueryTracker[queries.length];
 		for (int i=0; i<queries.length; i++) {
 			this.queries[i] = new QueryTracker(queries[i]);
@@ -60,12 +64,16 @@ public class TwitterSpider implements Spider {
 	public class QueryTracker {
 		private Query query;
 		
-		public QueryTracker(Queryable query) {
-			this.query = new Query(query.toString(Queryable.IMPLICIT_AND));
+		public QueryTracker(Query query) {
+			this.query = query;
 			this.query.setRpp(100);
 			this.query.setPage(1);
 			Long sinceId = initializeSinceId();
 			if (sinceId != null) this.query.setSinceId(sinceId);
+		}
+		
+		public QueryTracker(Queryable query) {
+			this(new Query(query.toString(Queryable.IMPLICIT_AND)));
 		}
 		
 		public QueryResult doQuery() {

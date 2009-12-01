@@ -14,6 +14,7 @@ import com.jasonrush.spiders.FlickrSpider;
 import com.jasonrush.spiders.GoogleNewsSpider;
 import com.jasonrush.spiders.Spider;
 import com.jasonrush.spiders.TwitterSpider;
+import com.jasonrush.spiders.TwitterUserSpider;
 
 /**
  * @author jasonrush
@@ -38,6 +39,17 @@ public class NetworkChallenge {
 		QueryGroup balloonDescriptors = new QueryGroup(new String[] { "weather", "sounding", "tether", "moor", "large", "giant", "big" }, Queryable.OR);
 		queries[2] = new QueryGroup(new Queryable[] { balloonDescriptors, new Query("balloon") }, Queryable.AND);
 	}
+	private static final String[] twitterUsers = new String[] {
+		"THEREDBALLOONS",
+		"findredballoons",
+		"darpaforcharity",
+		"Cash4RedBalloon",
+		"darpaballoon",
+		"10loons",
+		"dwlz",
+		"DARPA_News",
+		"10Balloons"
+	};
 	
 	/**
 	 * @param args
@@ -70,6 +82,7 @@ public class NetworkChallenge {
 	private static boolean initSpiders() {
 		//Initialize each spider
 		if (!initTwitterSpider()) return false;
+		if (!initTwitterUserSpider()) return false;
 		if (!initFlickrSpider()) return false;
 		if (!initFeedSpiders()) return false;
 		return true;
@@ -78,6 +91,16 @@ public class NetworkChallenge {
 	private static boolean initTwitterSpider() {
 		try {
 			spiders.add(new TwitterSpider(queries, new NetworkChallengeTwitterResultSaver()));
+			return true;
+		} catch (SQLException e) {
+			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+			return false;
+		}
+	}
+	
+	private static boolean initTwitterUserSpider() {
+		try {
+			spiders.add(new TwitterUserSpider(twitterUsers, new NetworkChallengeTwitterResultSaver()));
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
