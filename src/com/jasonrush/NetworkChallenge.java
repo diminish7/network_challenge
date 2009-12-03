@@ -55,14 +55,12 @@ public class NetworkChallenge {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//TODO: Need to not start from scratch if this crashes and we start over
-		//		Take an arg that will look in DB and see last id/timestamp and start from their?
 		//Initialize
 		if (!initDriver()) return;
 		if (!initSpiders()) return;
-		// while (true) {		//TODO: This should loop indefinitely in production
-		for (int i=0; i<5; i++) {
+		while (true) {
 			for (Spider spider : spiders) {
+				System.out.println("#### " + spider.getClass().toString() + ": Processing next batch ####");
 				spider.processNextBatch();
 			}
 		}
