@@ -1,2 +1,0 @@
-Turn the spider calls into an infinite loop until manually broken
-Each spider needs it's own thread
