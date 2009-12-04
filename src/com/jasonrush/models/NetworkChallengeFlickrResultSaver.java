@@ -57,6 +57,7 @@ public class NetworkChallengeFlickrResultSaver implements FlickrResultSaver {
 			System.out.println("Saved photo " + photo.getId());
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Unable to save the photo: " + photo.getId());
+			e.printStackTrace();
 		}
 	}
 

@@ -73,6 +73,7 @@ public class NetworkChallenge {
 			return true;
 		} catch (ClassNotFoundException e) {
 			System.out.println("Uh oh. Can't find the MySQL JDBC driver...");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -92,6 +93,7 @@ public class NetworkChallenge {
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -102,6 +104,7 @@ public class NetworkChallenge {
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -112,6 +115,7 @@ public class NetworkChallenge {
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -123,6 +127,7 @@ public class NetworkChallenge {
 				return true;
 			} catch (SQLException e) {
 				System.out.println("Uh oh. Can't create a connection to the MySQL database...");
+				e.printStackTrace();
 				return false;
 			}
 		}

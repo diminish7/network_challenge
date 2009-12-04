@@ -56,6 +56,7 @@ public class NetworkChallengeFeedResultSaver implements FeedResultSaver {
 			String guid = entry.get("guid");
 			if (guid == null) guid = entry.get("link");
 			System.out.println("Uh oh. Unable to save the feed entry: " + guid);
+			e.printStackTrace();
 		}
 	}
 

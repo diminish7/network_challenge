@@ -46,6 +46,7 @@ public class NetworkChallengeTwitterResultSaver implements TwitterResultSaver {
 			System.out.println("Saved tweet " + tweet.getId());
 		} catch (SQLException e) {
 			System.out.println("Uh oh. Unable to save the tweet: " + tweet.getId() + ": " + tweet.getText());
+			e.printStackTrace();
 		}
 	}
 
